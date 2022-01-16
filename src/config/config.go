@@ -8,9 +8,16 @@ import (
 	"strings"
 )
 
+type Config struct {
+	configMap map[string]string
+}
+
+func (config *Config) Get(key string) string {
+	return config.configMap[key]
+}
 func loadConfig() map[string]string {
 	configMap := make(map[string]string)
-	f, err := os.Open("./src/config/config.ini")
+	f, err := os.Open("./config.ini")
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -26,8 +33,10 @@ func loadConfig() map[string]string {
 	reader := bufio.NewReader(f)
 	for {
 		readString, err := reader.ReadString('\n')
-		split := strings.Split(readString, "=")
-		configMap[strings.TrimSpace(split[0])] = strings.TrimSpace(split[1])
+		index := strings.Index(readString, "=")
+		key := readString[:index]
+		val := readString[index+1:]
+		configMap[strings.TrimSpace(key)] = strings.TrimSpace(val)
 		if err != nil {
 			if err == io.EOF {
 				return configMap
@@ -36,8 +45,8 @@ func loadConfig() map[string]string {
 	}
 }
 
-var config = loadConfig()
-
-func Config(key string) string {
-	return config[key]
+func LoadConfig() *Config {
+	return &Config{configMap: loadConfig()}
 }
+
+var CONFIG = LoadConfig()
