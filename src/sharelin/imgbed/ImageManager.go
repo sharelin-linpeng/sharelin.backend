@@ -50,7 +50,7 @@ func remove() http.HandlerFunc {
 }
 
 const (
-	UploadPath = "/Users/sharelin/GolandProjects/sharelin.backend/static/upload"
+	UploadPath = "/Users/sharelin/GolandProjects/sharelin.backend/static/images/upload"
 	UploadUrl  = "/uploadImage"
 )
 
@@ -64,7 +64,8 @@ func NewImageFileHandler() *ImageFileHandler {
 func (receiver ImageFileHandler) HandUploadFile(file upload.File) {
 	imageFile := ImageFile{}
 	imageFile.Name = file.Name
-	imageFile.Path = file.Path
+	imageFile.Path = file.Path[len("/Users/sharelin/GolandProjects/sharelin.backend/static"):] + "/" + file.Name
+
 	imageFile.SourceName = file.SourceName
 	imageFile.CreateTime = file.CreateTime
 	ImageDataBase.saveFileInfo(imageFile)
